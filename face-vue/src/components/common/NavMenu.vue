@@ -12,7 +12,7 @@
       </el-menu-item>
       <a href="#nowhere" style="color: #222;float: right;padding: 20px;">更多功能</a>
       <i class="el-icon-menu" style="float:right;font-size: 45px;color: #222;padding-top: 8px"></i>
-      <span style="position: absolute;padding-top: 20px;right: 43%;font-size: 30px;font-weight: bold">欢迎使用Face ID</span>
+      <span style="position: absolute;padding-top: 20px;right: 43%;font-size: 20px;font-weight: bold">欢迎使用Face ID</span>
     </el-menu>
 </template>
 
@@ -22,9 +22,9 @@ export default {
   data () {
     return {
       navList: [
-        {name: '/index', navItem: '发布签到'},
-        {name: '/jotter', navItem: '查看签到情况'},
-        {name: '/library', navItem: '学生管理'},
+        {name: '/index', navItem: '学生管理'},
+        {name: '/jotter', navItem: '发布签到'},
+        {name: '/library', navItem: '查看签到情况'},
         {name: '/admin', navItem: '个人信息'}
       ]
     }
