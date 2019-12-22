@@ -10,7 +10,7 @@
           <el-input v-model="form.name" autocomplete="off" placeholder="请输入中文"></el-input>
         </el-form-item>
         <el-form-item label="生日" :label-width="formLabelWidth" prop="date">
-          <el-input v-model="form.date" autocomplete="off"></el-input>
+          <el-input v-model="form.date" autocomplete="off" placeholder="xxxx-x-x"></el-input>
         </el-form-item>
         <el-form-item label="照片" :label-width="formLabelWidth" prop="cover">
           <el-input v-model="form.cover" autocomplete="off" placeholder="图片 URL"></el-input>
@@ -81,11 +81,11 @@ export default {
           abs: this.form.abs,
           category: this.form.category
         }).then(resp => {
-        if (resp && resp.status === 200) {
-          this.dialogFormVisible = false
-          this.$emit('onSubmit')
-        }
-      })
+          if (resp && resp.status === 200) {
+            this.dialogFormVisible = false
+            this.$emit('onSubmit')
+          }
+        })
     }
   }
 }

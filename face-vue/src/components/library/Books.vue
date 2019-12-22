@@ -1,62 +1,122 @@
 <template>
   <div>
     <el-row style="height: 840px;">
-      <!--<search-bar></search-bar>-->
+      <search-bar @onSearch="searchResult" ref="searchBar"></search-bar>
       <el-tooltip effect="dark" placement="right"
-                  v-for="item in students"
+                  v-for="item in students.slice((currentPage-1)*pagesize,currentPage*pagesize)"
                   :key="item.id">
         <p slot="content" style="font-size: 14px;margin-bottom: 6px;">{{item.name}}</p>
         <p slot="content" style="font-size: 13px;margin-bottom: 6px">
-          <span>{{item.age}}</span> /
           <span>{{item.date}}</span> /
-          <span>{{item.class}}</span>
         </p>
         <p slot="content" style="width: 300px" class="abstract">{{item.abs}}</p>
         <el-card style="width: 135px;margin-bottom: 20px;height: 233px;float: left;margin-right: 15px" class="book"
                  bodyStyle="padding:10px" shadow="hover">
-          <div class="cover">
-            <img :src="item.photo" alt="封面">
+          <div class="photo" @click="editStudent(item)">
+            <img :src="item.photo" alt="照片">
           </div>
           <div class="info">
             <div class="name">
               <a href="">{{item.name}}</a>
             </div>
+            <i class="el-icon-delete" @click="deleteBook(item.id)"></i>
           </div>
-          <div class="sid">{{item.sid}}</div>
         </el-card>
       </el-tooltip>
+      <edit-form @onSubmit="loadStudents()" ref="edit"></edit-form>
     </el-row>
     <el-row>
       <el-pagination
-        :current-page="1"
-        :page-size="10"
-        :total="20">
+        @current-change="handleCurrentChange"
+        :current-page="currentPage"
+        :page-size="pagesize"
+        :total="students.length">
       </el-pagination>
     </el-row>
   </div>
 </template>
 
 <script>
+import EditForm from './EditForm'
+import SearchBar from './SearchBar'
 export default {
-  name: 'Books',
+  name: 'Students',
+  components: {EditForm, SearchBar},
   data () {
     return {
-      students: [
-        {
-          photo: 'https://i.loli.net/2019/12/23/JKBDtrb7GMPfSiQ.jpg',
-          name: '刘阳慧仪',
-          sid: '20171308011',
-          date: '2000-02-03',
-          class: '计科一班',
-          abs: '貌美如花'
+      students: [],
+      currentPage: 1,
+      pagesize: 17
+    }
+  },
+  mounted: function () {
+    this.loadStudents()
+  },
+  methods: {
+    loadStudents () {
+      var _this = this
+      this.$axios.get('/students').then(resp => {
+        if (resp && resp.status === 200) {
+          _this.students = resp.data
         }
-      ]
+      })
+    },
+    handleCurrentChange: function (currentPage) {
+      this.currentPage = currentPage
+      console.log(this.currentPage)
+    },
+    searchResult () {
+      var _this = this
+      this.$axios
+        .post('/search', {
+          keywords: this.$refs.searchBar.keywords
+        }).then(resp => {
+          if (resp && resp.status === 200) {
+            _this.students = resp.data
+          }
+        })
+    },
+    deleteBook (id) {
+      this.$confirm('此操作将永久删除该学生, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        this.$axios
+          .post('/delete', {id: id}).then(resp => {
+            if (resp && resp.status === 200) {
+              this.loadStudents()
+            }
+          })
+      }
+      ).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消删除'
+        })
+      })
+      // alert(id)
+    },
+    editBook (item) {
+      this.$refs.edit.dialogFormVisible = true
+      this.$refs.edit.form = {
+        id: item.id,
+        photo: item.photo,
+        name: item.name,
+        date: item.date,
+        abs: item.abs,
+        category: {
+          id: item.category.id.toString(),
+          name: item.category.name
+        }
+      }
     }
   }
 }
 </script>
 
 <style scoped>
+
   .photo {
     width: 115px;
     height: 172px;
@@ -76,7 +136,7 @@ export default {
     text-align: left;
   }
 
-  .sid {
+  .author {
     color: #333;
     width: 102px;
     font-size: 13px;
@@ -89,6 +149,18 @@ export default {
     line-height: 17px;
   }
 
+  .el-icon-delete {
+    cursor: pointer;
+    float: right;
+  }
+
+  .switch {
+    display: flex;
+    position: absolute;
+    left: 780px;
+    top: 25px;
+  }
+
   a {
     text-decoration: none;
   }
@@ -96,4 +168,5 @@ export default {
   a:link, a:visited, a:focus {
     color: #3377aa;
   }
+
 </style>

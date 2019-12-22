@@ -22,9 +22,9 @@ export default {
   data () {
     return {
       navList: [
-        {name: '/index', navItem: '学生管理'},
-        {name: '/jotter', navItem: '发布签到'},
-        {name: '/library', navItem: '查看签到情况'},
+        {name: '/index', navItem: '发布签到'},
+        {name: '/jotter', navItem: '查看签到情况'},
+        {name: '/library', navItem: '学生管理'},
         {name: '/admin', navItem: '个人信息'}
       ]
     }
